@@ -116,3 +116,23 @@ pub fn shift_right_logically(flags: &mut u8, register: &mut u8) {
     bitwise::set_bit_off(flags, SUBTRACTION | HALF_CARRY);
     bitwise::set_bit_dynamic(flags, CARRY, new_carry);
 }
+
+pub fn rotate_left_a(flags: &mut u8, register: &mut u8) {
+    rotate_left(flags, register);
+    bitwise::set_bit_off(flags, ZERO);
+}
+
+pub fn rotate_left_through_carry_a(flags: &mut u8, register: &mut u8) {
+    rotate_left_through_carry(flags, register);
+    bitwise::set_bit_off(flags, ZERO);
+}
+
+pub fn rotate_right_a(flags: &mut u8, register: &mut u8) {
+    rotate_right(flags, register);
+    bitwise::set_bit_off(flags, ZERO);
+}
+
+pub fn rotate_right_through_carry_a(flags: &mut u8, register: &mut u8) {
+    rotate_right_through_carry(flags, register);
+    bitwise::set_bit_off(flags, ZERO);
+}
