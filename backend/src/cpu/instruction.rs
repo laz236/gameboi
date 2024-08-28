@@ -136,3 +136,40 @@ pub fn rotate_right_through_carry_a(flags: &mut u8, register: &mut u8) {
     rotate_right_through_carry(flags, register);
     bitwise::set_bit_off(flags, ZERO);
 }
+
+pub fn jump_to_pair(pc: &mut u16, hi: u8, lo: u8) {
+    *pc = bitwise::get_pair(hi, lo);
+}
+
+// todo: possible refactor using jump_conditional
+pub fn jump_absolute<T: IMemoryMap>(bus: &mut T, pc: &mut u16) {
+    jump_absolute_conditional(bus, pc, true);
+}
+
+// todo: add dynamic timings if condition is true or false (4 cycles for true, 3 for false)
+pub fn jump_absolute_conditional<T: IMemoryMap>(bus: &mut T, pc: &mut u16, jump: bool) {
+    let lo = bus.read(*pc);
+    *pc = pc.wrapping_add(1);
+
+    let hi = bus.read(*pc);
+    *pc = pc.wrapping_add(1);
+
+    if jump {
+        *pc = bitwise::get_pair(hi, lo);
+    }
+}
+
+// todo: possible refactor using jump_relative_conditional
+pub fn jump_relative<T: IMemoryMap>(bus: &mut T, pc: &mut u16) {
+    jump_relative_conditional(bus, pc, true);
+}
+
+// todo: add dynamic timings if condition is true or false (3 cycles for true, 2 for false)
+pub fn jump_relative_conditional<T: IMemoryMap>(bus: &mut T, pc: &mut u16, jump: bool) {
+    let offset = bus.read(*pc) as i8;
+    *pc = pc.wrapping_add(1);
+
+    if jump {
+        *pc = pc.wrapping_add_signed(offset as i16);
+    }
+}
